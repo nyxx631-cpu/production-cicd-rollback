@@ -53,6 +53,22 @@ pipeline {
             }
         }
 
+        stage('Security Scan') {
+            steps {
+                bat """
+                    wsl.exe bash -c "set -eu; trivy image --severity HIGH,CRITICAL --exit-code 1 --format json --output trivy-report.json '%DOCKERHUB_REPO%:%IMAGE_TAG%'"
+                """
+            }
+            post {
+                always {
+                    archiveArtifacts(
+                        artifacts: 'trivy-report.json',
+                        allowEmptyArchive: true
+                    )
+                }
+            }
+        }
+
         stage('Push Docker Image') {
             steps {
                 withCredentials([
