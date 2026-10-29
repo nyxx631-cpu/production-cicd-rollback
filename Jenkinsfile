@@ -56,7 +56,7 @@ pipeline {
         stage('Security Scan') {
             steps {
                 bat """
-                    wsl.exe bash -c "set -eu; trivy image --severity HIGH,CRITICAL --exit-code 1 --format json --output trivy-report.json '%DOCKERHUB_REPO%:%IMAGE_TAG%'"
+                    trivy image --severity HIGH,CRITICAL --exit-code 1 --format json --output trivy-report.json %DOCKERHUB_REPO%:%IMAGE_TAG%
                 """
             }
             post {
